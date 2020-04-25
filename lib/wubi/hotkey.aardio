@@ -15,13 +15,13 @@ default = /*******
 
 //以下代码自/*......*/移出后生效
 /*
-//按`重复输入五笔编码
-["z"] = function(){
+//按~重复输入五笔编码
+["~"] = function(){
     if(key.ime.getOpenStatus()){
         var keys = key.hotkey.lastAlphaKeys();
         if(keys){ return key.send(keys); }  
     }
-    key.send("z");
+    key.send("~");
 }
 //按`date输入大写时间
 ["~date"] = function(){ 
