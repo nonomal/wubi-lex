@@ -217,9 +217,10 @@ winform.listbox.wndproc = function(hwnd,message,wParam,lParam){
 					) 
 				} ) 
 				if(selIndex>1){	
+					winform.popmenu.add();
 					var lexPath = app.lexContents.getPathByIndex(selIndex-1)
 					var lexName = app.lexContents.getNameByIndex(selIndex-1)
-					winform.popmenu.add('重新计算权重',function(id){  
+					winform.popmenu.add('词频优化：重新计算权重',function(id){  
 						winform.listbox.disabled = true;
 						
 						var frmWordWeight= winform.loadForm("\dlg\dict\wordWeight.aardio");
@@ -233,6 +234,27 @@ winform.listbox.wndproc = function(hwnd,message,wParam,lParam){
 						else {
 							winform.listbox.disabled = false;
 						}
+					} )  
+					winform.popmenu.add('词频优化：出简后出全',function(id){ 
+						
+						thread.invoke( 
+							function(winform,lexPath){
+								winform.listbox.disabled = true;
+								winform.lbTip.busy(true,"正在优化码表为出简后出全");
+								
+								import wubi.lexFile;
+								var wubiLex = wubi.lexFile(lexPath); 
+								
+								var count = wubiLex.optShortCodeChar();
+								wubiLex.saveLex(lexPath); 
+								
+								winform.lbTip.busy(false
+									,string.format("已优化出简后出全：%d 个单字",count) )
+									
+								winform.listbox.disabled = false;
+							 	
+							},winform,lexPath
+						)	 
 					} )  
 				}
 				winform.popmenu.add();
@@ -865,6 +887,25 @@ var createMenuItems = function(){
 					winform.editLex.readonly = false;
 				}
 			};
+			{ "简码字全码后移（出简后出全）";
+				function(id){
+					thread.invoke( 
+						function(winform){
+							winform.editLex.busy(true,"正在优化码表为出简后出全");
+							
+							import wubi.lexFile;
+							var wubiLex = wubi.lexFile("");
+							wubiLex.addText(winform.editLex.text); 
+							
+							var count = wubiLex.optShortCodeChar();
+							winform.editLex.text = wubiLex.tostring(); 
+							winform.editLex.busy(false
+								,string.format("已优化出简后出全：%d 个单字",count) )
+							 
+						},winform
+					)	 
+				} 
+			}; 
 			{ "单字优先";
 				function(id){
 					thread.invoke( 
@@ -978,7 +1019,7 @@ var createMenuItems = function(){
 			
 			{ "一字一码 ( 出简不出全 )";
 				function(id){
-					winform.ddGb2312.oncommand();
+					winform.ddSimplified.oncommand();
 				} 
 			};
 			

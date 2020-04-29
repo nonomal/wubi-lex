@@ -619,9 +619,11 @@ class lexFile{
 		var len = ..string.len;
 		
 		var map = {}
-		for(i=#this.inputCodes;1;-1){
-			var code = this.inputCodes[i]  
-			var texts = this.outputMap[code]
+		var inputCodes = this.inputCodes;
+		var outputMap = this.outputMap;
+		for(i=#inputCodes;1;-1){
+			var code = inputCodes[i]  
+			var texts = outputMap[code]
 			for(i=#texts;1;-1){
 				var txt = texts[i];
 				if(len(txt)==1){
@@ -630,30 +632,61 @@ class lexFile{
 					} 
 				}  
 			}
-			
-			if(!#texts){
-				this.outputMap[code] = null;
-				remove(this.inputCodes,i);
-			}
 		}; 
 		
-		for(i=#this.inputCodes;1;-1){
-			var code = this.inputCodes[i]  
-			var texts = this.outputMap[code]
+		for(i=#inputCodes;1;-1){
+			var code = inputCodes[i]  
+			var texts = outputMap[code]
 			for(i=#texts;1;-1){
 				var txt = texts[i];
-				if(map[txt] && (#code>map[txt])){
-					if(!map[txt] || (#code>map[txt])){
-						remove(texts,i);
-					} 
+				if(map[txt] && (#code>map[txt])){ 
+					remove(texts,i);
 				}  
 			}
 			
 			if(!#texts){
-				this.outputMap[code] = null;
-				remove(this.inputCodes,i);
+				outputMap[code] = null;
+				remove(inputCodes,i);
 			}
 		}; 		
+	}; 
+	optShortCodeChar  = function(){
+		var remove = ..table.remove;
+		var len = ..string.len;
+		
+		var map = {}
+		var inputCodes = this.inputCodes;
+		var outputMap = this.outputMap;
+		var codeWeight = this.codeWeight;
+		for(i=#inputCodes;1;-1){
+			var code = inputCodes[i]  
+			if (#code==4) continue;
+			
+			var txt = outputMap[code][1];
+			if( len(txt)==1 ){
+				map[txt] = #code;
+			} 
+		}; 
+		
+		var count = 0;
+		for(i=#inputCodes;1;-1){
+			var code = inputCodes[i]  
+			var texts = outputMap[code]
+			if(#texts < 2 ) continue;
+			
+			var txt = texts[1];
+			var txt2 = texts[2];
+			if( map[txt] && (#code==4) ){ 
+				if(map[txt2] && map[txt]!=3){
+					continue;
+				}
+				codeWeight[code][txt]  = codeWeight[code][txt2] + 1;
+				texts[2],texts[1] = txt,txt2;
+				count++; 
+			}
+		};
+		
+		return count; 		
 	}; 
 	getTableData = function(){
 		this.sort();
@@ -1228,6 +1261,7 @@ tostring(.(reverse,singleLine) = 返回文本格式词库\n@reverse参数控制�
 filter(过滤函数) = @.filter(\n	function(txt,code){\n		return true;__/*遍历顺序已经按按键的字母序排序,\n返回true保留，返回false删除该词条*/\n	}\n)	
 statistics() = 返回统计数据
 simplified() = 出简不出全
+optShortCodeChar() = 简码字全码后移
 combineCode(__) = 参数中输入词组，返回自动生成的编码,\n此函数使用五笔规则生成编码，不需要在码表中查找词组\n失败返回null,成功返回编码
 isEmpty() = 如果码表为空则返回true
 getTableData() = 返回表数据,\n返回表为包含所有编码的数组,\n每个编码为一个数组,第一列为编码,其余列为词语

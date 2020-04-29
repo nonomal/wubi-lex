@@ -50,7 +50,40 @@ wubiLex提供了方便的反查拆字功能。按 Ctrl + F2 反查五笔编码�
 另外，wubiLex还提供了强大的「超级热键」功能，可以用于扩展输入法功能，
 列如输入数字后自动将句号转换为小数点，输入大写中文数字的中文日期等等。
 ![超级热键](https://github.com/aardio/wubi-lex/raw/master/screenshots/4.png)
-wubiLex 的帮助页面收集整理了很多微软五笔常用快捷键、用法帮助。
+这里补充一个重要的超级热键，  
+效果：中文模式下按 Ctrl+. 切换中英文标点模式。  
+将下面的代码复制到「超级热键」中，然后点击「保存」按钮即可生效。  
+``` javascript
+["Ctrl+."] = function(){    
+    import win.reg;  
+    var reg = win.reg("HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS");  
+    var mode = !reg.queryValue("UseEnglishPunctuationsInChineseInputMode") ? 1 : 0  
+    reg.setDwValue("UseEnglishPunctuationsInChineseInputMode",mode)	  
+      
+    key.ime.changeRequest(0x4090409)  
+    key.ime.changeRequest(0x8040804)  
+};  
+```
+
+补充： WIN10 20H1已经默认支持 Ctrl +. 快捷键   
+  
+再介绍一个超级热键：按Ctrl+,打开或关闭拼音混输功能。  
+将下面的代码复制到「超级热键」中，然后点击「保存」按钮即可生效。 
+``` javascript 
+["Ctrl+,"] = function(){    
+    import win.reg;  
+    var reg = win.reg("HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS");  
+    var mode = !reg.queryValue("PinyinMixEnable") ? 1 : 0  
+    reg.setDwValue("PinyinMixEnable",mode)	  
+      
+    key.ime.changeRequest(0x4090409)  
+    key.ime.changeRequest(0x8040804)  
+};  
+```
+
+
+wubiLex 的帮助页面收集整理了很多微软五笔常用快捷键、用法帮助。  
+注意：WIN10 20H1以上版本已经可以关闭 Shift, Ctrl+Space 等快捷键。  
 ![五笔常用技巧](https://github.com/aardio/wubi-lex/raw/master/screenshots/5.png)
 并提供了五笔86、五笔98、五笔新世纪（06版）、五笔091、郑码等字根图，
 整理收集了所有可以直接复制粘贴的文本字根(不需要安装自定义字体)
