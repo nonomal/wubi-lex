@@ -38,35 +38,44 @@ default = /*******
     
     key.sendString(year+"年"+month+"月"+day+"日");
 }; 
+//运行计算器
 ["~calc"] = function(){
     process.execute("calc.exe")
-}
+};
+//运行word
 ["~word"] = function(){
     var word = com.CreateObject("Word.Application")
     if(word)word.Visible = true; 
-}
-
+};
+//打开或关闭拼音混输
+["Ctrl+,"] = function(){  
+    import win.reg;
+    var reg = win.reg("HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS");
+    var mode = !reg.queryValue("PinyinMixEnable") ? 1 : 0
+    reg.setDwValue("PinyinMixEnable",mode)	
+    
+    key.ime.changeRequest(0x4090409)
+    key.ime.changeRequest(0x8040804)
+};
+//运行QQ
 ["Ctrl+Q,Q"] = function(){
     import process 
     import fsys.lnk; 
     qqpath  = fsys.lnk.search( {"qq.exe";"QQScLauncher.exe";"QQProtect.exe"} )   
     process.execute( qqpath )
 };
-
-//取消次选键，放到注释外面生效
+//取消次选键
 [","] = function(){
     if( wubi.candidateWindow.isVisible() ){
         key.send(" ,") 
     } 
     else key.send(",")
 };
-
 //按 shift + back 变 ctrl + z，因为这时候shift是按下状态，所以可以先发一个key.up("SHIFT")弹起shift键
 ["SHIFT+BACK"] = function(){
     key.up("SHIFT")
     key.combine("CTRL","Z")
 };
-
 //把斜杠“/”改为顿号
 ["/"] = function(){
     if( key.ime.getOpenStatus() ){
