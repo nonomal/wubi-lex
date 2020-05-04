@@ -13,9 +13,9 @@ chkHalfWidthInputModeByDefault={cls="plus";text='\uF0C8 英文标点默认使用
 chkUseEnglishPunctuationsInChineseInputMode={cls="plus";text='\uF0C8 中文输入时使用英文标点（ WIN10 20H1以上版本支持 Ctrl + . 切换 ）';left=156;top=219;right=730;bottom=250;align="left";dl=1;dr=1;font=LOGFONT(h=-16;name='FontAwesome');notify=1;z=15};
 chkWubiAutoFinalize={cls="plus";text='\uF0C8 四码唯一时自动上屏（ 拼音混输时不建议开启 ）';left=156;top=106;right=596;bottom=137;align="left";dl=1;dr=1;font=LOGFONT(h=-16;name='FontAwesome');notify=1;z=11};
 editMaxCandidates={cls="plus";left=768;top=460;right=810;bottom=489;align="left";border={bottom=1;color=-16744448};dr=1;font=LOGFONT(h=-16);notify=1;tabstop=1;textPadding={top=6;bottom=1};z=23};
-editWubiDescription={cls="plus";left=284;top=365;right=565;bottom=398;align="left";border={bottom=1;color=-16744448};dl=1;dr=1;editable=true;font=LOGFONT(h=-16);tabstop=1;textPadding={top=6;bottom=1};z=10};
-editWubiFont={cls="plus";left=284;top=456;right=573;bottom=489;border={bottom=1;color=-16744448};dl=1;dr=1;editable=true;font=LOGFONT(h=-16);notify=1;tabstop=1;textPadding={top=6;bottom=1};z=8};
-editWubiIcon={cls="plus";left=284;top=411;right=810;bottom=444;align="left";border={bottom=1;color=-16744448};dl=1;dr=1;editable=true;font=LOGFONT(h=-16);tabstop=1;textPadding={top=6;bottom=1};z=7};
+editWubiDescription={cls="plus";left=284;top=365;right=565;bottom=398;align="left";border={bottom=1;color=-16744448};dl=1;dr=1;editable=1;font=LOGFONT(h=-16);tabstop=1;textPadding={top=6;bottom=1};z=10};
+editWubiFont={cls="plus";left=284;top=456;right=573;bottom=489;border={bottom=1;color=-16744448};dl=1;dr=1;editable=1;font=LOGFONT(h=-16);notify=1;tabstop=1;textPadding={top=6;bottom=1};z=8};
+editWubiIcon={cls="plus";left=284;top=411;right=810;bottom=444;align="left";border={bottom=1;color=-16744448};dl=1;dr=1;editable=1;font=LOGFONT(h=-16);tabstop=1;textPadding={top=6;bottom=1};z=7};
 plus={cls="plus";left=160;top=346;right=684;bottom=356;border={bottom=1;color=-4144960};dl=1;dr=1;z=24};
 plus2={cls="plus";left=160;top=86;right=684;bottom=96;border={bottom=1;color=-4144960};dl=1;dr=1;z=13};
 plus3={cls="plus";left=160;top=286;right=684;bottom=296;border={bottom=1;color=-4144960};dl=1;dr=1;z=16};
@@ -97,6 +97,9 @@ winform.editMaxCandidates.createEditBox(
 var reg = win.reg("HKEY_CURRENT_USER\Software\Microsoft\InputMethod\CandidateWindow\CHS\2");
 winform.editWubiFont.text = reg.queryValue("FontStyle");
 winform.editMaxCandidates.text = reg.queryValue("MaxCandidates") : "7";
+if(!reg.queryValue("EnableFixedCandidateCountMode")){
+	winform.editMaxCandidates.text = 0;
+}
 reg.close();
 
 import app;
@@ -106,16 +109,18 @@ import tsfUtil;
 import key.ime;
 winform.btnSave.oncommand = function(id,event){
     var maxCandidates = winform.editMaxCandidates.text + 0;
-	if(maxCandidates<3){
-		maxCandidates=3;
-		winform.editMaxCandidates.editBox.showWarningTip("wubiLex","候选词数目不能小于3")
-		return;
-	}
-	if(maxCandidates>9){
-		maxCandidates=9;
-		winform.editMaxCandidates.editBox.showWarningTip("wubiLex","候选词数目不能大于9")
-		return;
-	}
+    if(maxCandidates){
+  		if(maxCandidates<3){
+			maxCandidates=3;
+			winform.editMaxCandidates.editBox.showWarningTip("wubiLex","候选词数目不能小于3")
+			return;
+		}
+		if(maxCandidates>9){
+			maxCandidates=9;
+			winform.editMaxCandidates.editBox.showWarningTip("wubiLex","候选词数目不能大于9")
+			return;
+		}  	
+    } 
 	
 	winform.btnSave.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'}
 	
@@ -125,7 +130,16 @@ winform.btnSave.oncommand = function(id,event){
 		fontStyle = "13.50pt;Regular;;Microsoft YaHei UI";
 	}
 	reg.setSzValue("FontStyle",fontStyle) 
-	reg.setDwValue("MaxCandidates",maxCandidates);
+	if(maxCandidates){
+		reg.setDwValue("MaxCandidates",maxCandidates);
+		reg.setDwValue("EnableFixedCandidateCountMode",1);
+	}
+	else {
+		reg.setDwValue("MaxCandidates",0);
+		reg.setDwValue("EnableFixedCandidateCountMode",0);
+	}
+	
+	
 	reg.close();
 	
 	var regSettings = win.reg("HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS");
@@ -236,24 +250,34 @@ winform.editMaxCandidates.editBox.translateAccelerator = function(msg){
     
     var vk = msg.wParam;
  	if( vk == 0x26/*_VK_UP*/ ){
-		winform.editMaxCandidates.text = winform.editMaxCandidates.text+1;
-		if((winform.editMaxCandidates.text+0)>9){
-			winform.editMaxCandidates.text = 9;
+		var maxCandidates = winform.editMaxCandidates.text+1;
+		if(maxCandidates>9){
+			maxCandidates = 9;
 		}
+		elseif(maxCandidates<3){
+			maxCandidates = 3;
+		}
+		 
+		winform.editMaxCandidates.text = maxCandidates;
 		return true;
 	}	
 	elseif( vk == 0x28/*_VK_DOWN*/){
-		winform.editMaxCandidates.text = winform.editMaxCandidates.text-1;
-		if((winform.editMaxCandidates.text+0)<3){
-			winform.editMaxCandidates.text = 3;
+		var maxCandidates = winform.editMaxCandidates.text-1;
+		if(maxCandidates>9){
+			maxCandidates = 9;
 		}
+		elseif(maxCandidates<3){
+			maxCandidates = 0;
+		}
+		 
+		winform.editMaxCandidates.text = maxCandidates;
 		return true;
 	}
 }
 
 import win.ui.tooltip; 
 var tooltipCtrl = win.ui.tooltip( winform );
-tooltipCtrl.addTool(winform.editMaxCandidates.editBox,"可以按上下方向键增减数字,数字必须在3到9之间" )
+tooltipCtrl.addTool(winform.editMaxCandidates.editBox,"可以按上下方向键增减数字,数字必须在3到9之间,0表示固定宽度" )
 tooltipCtrl.addTool(winform.btnSelectFont,"点这里选择候选词显示字体" )
 tooltipCtrl.addTool(winform.btnOpenIcon,"点这里选择输入法显示图标" )
 tooltipCtrl.addTool(winform.editWubiFont.editBox,"清空则恢复默认字体")
