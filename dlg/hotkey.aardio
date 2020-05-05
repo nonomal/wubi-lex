@@ -45,8 +45,9 @@ winform.chkEnableHotkey.oncommand = function(id,event){
 	winform.chkDecimalPoint.disabled = !winform.chkEnableHotkey.checked
 }
 
-
 winform.btnSave.skin(style.primaryButton)
+
+import string.chineseNumber;
 var hotkeyMgr;
 winform.btnSave.oncommand = function(id,event){
     config.hotkey.save();
@@ -124,7 +125,6 @@ winform.btnSave.oncommand = function(id,event){
 				}		
 			}
 			elseif( vk>='A'# && vk<='Z'# ){
-				if(prevAlphaKeys.endkey){ ..table.clear(prevAlphaKeys); } 
 				..table.push(curentAlphaKeys,vk);
 			}
 			elseif(#curentAlphaKeys)  {
