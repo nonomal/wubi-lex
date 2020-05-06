@@ -28,6 +28,10 @@ default = /*******
     var zh = string.chineseNumber('〇一二三四五六七八九');
     key.sendString(zh.date());
 }; 
+//大写金额
+["Ctrl+$"] = function(){  
+    wubi.chineseNumber().doModal();
+};
 //运行计算器
 ["~calc"] = function(){
     process.execute("calc.exe")
