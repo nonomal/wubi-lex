@@ -12,9 +12,17 @@ default = /*******
     key.ime.changeRequest(0x4090409)
     key.ime.changeRequest(0x8040804)
 };
-
+//大写金额(可输入数学表达式)、日期、时间
+["Ctrl+$"] = function(){  
+    wubi.chineseNumber().show();
+};
 //以下代码自/*......*/移出后生效
 /*
+//按`date输入大写的当前日期
+["~date"] = function(){ 
+    var zh = string.chineseNumber('〇一二三四五六七八九');
+    key.sendString(zh.date()); //改为 zh.time() 输出大写的当前时间
+}; 
 //按~重复输入五笔编码
 ["~"] = function(){
     if(key.ime.getOpenStatus()){
@@ -23,15 +31,6 @@ default = /*******
     }
     key.send("~");
 }
-//按`date输入大写时间
-["~date"] = function(){ 
-    var zh = string.chineseNumber('〇一二三四五六七八九');
-    key.sendString(zh.date());
-}; 
-//大写金额
-["Ctrl+$"] = function(){  
-    wubi.chineseNumber().doModal();
-};
 //运行计算器
 ["~calc"] = function(){
     process.execute("calc.exe")
