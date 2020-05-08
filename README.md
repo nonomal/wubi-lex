@@ -67,19 +67,16 @@ wubiLex提供了方便的反查拆字功能。按 Ctrl + F2 反查五笔编码�
 
 补充： WIN10 20H1已经默认支持 Ctrl +. 快捷键   
   
-再介绍一个超级热键：按Ctrl+,打开或关闭拼音混输功能。  
-将下面的代码复制到「超级热键」中，然后点击「保存」按钮即可生效。 
-``` javascript 
-["Ctrl+,"] = function(){    
-    import win.reg;  
-    var reg = win.reg("HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS");  
-    var mode = !reg.queryValue("PinyinMixEnable") ? 1 : 0  
-    reg.setDwValue("PinyinMixEnable",mode)	  
-      
-    key.ime.changeRequest(0x4090409)  
-    key.ime.changeRequest(0x8040804)  
+再介绍一个超级热键：按Ctrl+$ 打开财务大写、日期时间大写、数学运算、进制转换工具。    
+将下面的代码复制到「超级热键」中，然后点击「保存」按钮即可生效。    
+``` javascript
+["Ctrl+$"] = function(){  
+    wubi.chineseNumber().show();  
 };  
 ```
+
+效果如下：  
+![财务大写](https://github.com/aardio/wubi-lex/raw/master/screenshots/cn.gif) 
 
 
 wubiLex 的帮助页面收集整理了很多微软五笔常用快捷键、用法帮助。  
