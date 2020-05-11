@@ -1274,5 +1274,6 @@ winform.btnAddFile.oncommand = function(id,event){
 	app.lexNetContents.update();
 }
 
+winform.enableDpiScaling();
 winform.show() 
 win.loopMessage();

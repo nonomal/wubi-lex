@@ -39,5 +39,6 @@ winform.showEtymon = function(){
 	tbs.selIndex = 2;	
 }
 
+winform.enableDpiScaling();
 winform.show();
 return win.loopMessage();

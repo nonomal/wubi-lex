@@ -282,6 +282,7 @@ tooltipCtrl.addTool(winform.btnSelectFont,"点这里选择候选词显示字体"
 tooltipCtrl.addTool(winform.btnOpenIcon,"点这里选择输入法显示图标" )
 tooltipCtrl.addTool(winform.editWubiFont.editBox,"清空则恢复默认字体")
 
+winform.enableDpiScaling();
 winform.show();
 win.loopMessage();
 return winform;

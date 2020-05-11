@@ -205,6 +205,7 @@ winform.btnHelp.oncommand = function(id,event){
 
 winform.btnHelp.skin(style.plainButton);
 
+winform.enableDpiScaling();
 winform.show();
 win.loopMessage();
 return winform;

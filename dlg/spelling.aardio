@@ -510,4 +510,5 @@ subscribe("spellingFocus",function(){
 	winform.editInput.setFocus();
 } )
 
+winform.enableDpiScaling();
 win.loopMessage();
