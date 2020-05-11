@@ -140,6 +140,7 @@ if(win.versionEx.buildNumber){
 
 winform.winver.text = "当前系统版本：" + winver;
 
+winform.enableDpiScaling();
 winform.show();
 win.loopMessage();
 return winform;

@@ -241,6 +241,7 @@ Y 阝刀乙子也弓习
 Z 纟三折凵母女厶 
 */
 
+winform.enableDpiScaling();
 winform.show();
 win.loopMessage();
 return winform;
