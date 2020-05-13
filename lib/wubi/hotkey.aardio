@@ -23,6 +23,18 @@ default = /*******
     var zh = string.chineseNumber('〇一二三四五六七八九');
     key.sendString(zh.date()); //改为 zh.time() 输出大写的当前时间
 }; 
+//增加音量
+["Ctrl+F6"] = function(){
+    key.press("VOLUME_UP");
+}
+//降低音量
+["Ctrl+F7"] = function(){
+    key.press("VOLUME_DOWN");
+}
+//切换静音
+["Ctrl+F8"] = function(){
+    key.press("VOLUME_MUTE");
+}
 //按~重复输入五笔编码
 ["~"] = function(){
     if(key.ime.getOpenStatus()){

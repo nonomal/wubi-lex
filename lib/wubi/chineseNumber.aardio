@@ -68,13 +68,26 @@ class chineseNumber{
 				elseif(string.indexOf(text,":")){
 					return;
 				}
+				elseif( text == "now" ){
+					var zh = string.chineseNumber('〇一二三四五六七八九'); 
+					var now = ..time();
+					items[1] = zh.date(now,"%Y年%m月%d日");
+					items[2] = zh.date(now,"%Y年%m月%d日 星期%w")
+					items[3] = zh.time(now,"%H时%M分%S秒");
+					items[4] = zh.time(now,"%p %I时%M分%S秒");
+					items[5] = zh.datetime(now);
+					items[6] = tostring(now,"%Y/%m/%d  %H:%M:%S");
+					items[7] = tostring(now,"%Y-%m-%d  %H:%M:%S");
+					items[8] = tostring(now,"%Y/%m/%d");
+					items[9] = tostring(now,"%Y-%m-%d");
+				}
     			else {
     				try{
     					num = eval(text)
     				}
     				
     				if(type(num)!=type.number){
-    					owner.showInfoTip("可输入以下格式：",'数值或金额示例: 12345.67\n日期示例: 2020.2.29\n时间示例: 23:50:56\n数学表达式示例: (12+23)*2');
+    					owner.showInfoTip("可输入以下格式：",'数值或金额示例: 12345.67\n数学表达式示例: (12+23)*2\n日期示例: 2020.2.29\n时间示例: 23:50:56\n当前日期时间: now');
     					menu.popup(false);
     					return;	
     				}
