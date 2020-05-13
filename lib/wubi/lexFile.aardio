@@ -1096,7 +1096,6 @@ class lexFile{
 		var wubi86 = 0;
 		var wubi091 = 0;
 		
-		
 		if(this.test("teb","笔") || this.test("teb","筆") ){ 
 			wubi98++; 
 			wubi06--;
@@ -1110,7 +1109,7 @@ class lexFile{
 			wubi091++;	
 		}
 		
-		if(this.test("wf","什")){ 
+		if(this.test("othc","煅")){ 
 			wubi98++; 
 			wubi06--;
 			wubi86--;
@@ -1123,33 +1122,33 @@ class lexFile{
 			wubi091++;	
 		}
 		
-		if(this.test("ya","试") || this.test("ya","試") ){ 
+		if( this.test("tuwb","舱") || this.test("tuwb","艙")  ){ 
 			wubi98++; 
 			wubi06--;
 			wubi86--;
-			wubi091++;
+			wubi091--; 
 		}
 		else {
 			wubi98--; 
 			wubi06++;
 			wubi86++;
-			wubi091--;
+			wubi091++;
 		}
 		
-		if(this.test("YAAG","试") || this.test("YAAG","試")){ 
+		if(this.test("uqwn","瓷")){ 
 			wubi86++; 
 			wubi06--;
 			wubi98--;
 			wubi091--;
-			wubi091++;
 		}
 		else {
 			wubi86--; 
 			wubi06++;
 			wubi98++;
+			wubi091++;
 		}
-		
-		if(this.test("xyn","编") || this.test("xyn","編")){
+	
+		if(this.test("khdy","跋") ){
 			wubi98++;
 			wubi06++;
 			wubi86--;
