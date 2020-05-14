@@ -109,7 +109,7 @@ var searchSpelling = win.debounce(function(str){
 	}
 	
 	winform.plusTitle.text = "拼音：" + string.conv.pinyin(str,,true);	
-	var code = winform.systemLex.find(str) 
+	var code = winform.systemLex.spelling(str) 
 	if(!code && winform.systemPhraseMap){
 		code = wubi.phrase.findCodeFromMap(winform.systemPhraseMap,str);
 	}
