@@ -71,15 +71,10 @@ class chineseNumber{
 				elseif( text == "now" ){
 					var zh = string.chineseNumber('〇一二三四五六七八九'); 
 					var now = ..time();
-					items[1] = zh.date(now,"%Y年%m月%d日");
-					items[2] = zh.date(now,"%Y年%m月%d日 星期%w")
-					items[3] = zh.time(now,"%H时%M分%S秒");
-					items[4] = zh.time(now,"%p %I时%M分%S秒");
-					items[5] = zh.datetime(now);
-					items[6] = tostring(now,"%Y/%m/%d  %H:%M:%S");
-					items[7] = tostring(now,"%Y-%m-%d  %H:%M:%S");
-					items[8] = tostring(now,"%Y/%m/%d");
-					items[9] = tostring(now,"%Y-%m-%d");
+					items[1] = zh.date(now,"%Y年%m月%d日 星期%w")
+					items[2] = zh.time(now,"%p %I时%M分%S秒");
+					items[3] = zh.datetime(now);
+					items[4] = tostring(now,"%Y/%m/%d  %H:%M:%S");
 				}
     			else {
     				try{
@@ -93,8 +88,6 @@ class chineseNumber{
     				}
     				
     				items[1] = tostring(num)
-    				items[2] = string.format("0x%X",num);
-    				items[3] = string.format("2#%b",num);
     			}
     		}
     	} 
