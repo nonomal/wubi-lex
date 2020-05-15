@@ -6,6 +6,7 @@ winform.add(
 bk={cls="bk";left=0;top=0;right=653;bottom=29;bgcolor=12632256;z=6};
 btnOpenFile={cls="plus";text='\uF115';left=540;top=87;right=577;bottom=106;color=2960685;dr=1;font=LOGFONT(h=-16;name='FontAwesome');notify=1;z=4};
 btnUpdate={cls="plus";text='\uF0C7 更新码表';left=290;top=255;right=492;bottom=291;bgcolor=11580047;dr=1;font=LOGFONT(h=-16;name='FontAwesome');notify=1;tabstop=1;z=1};
+chk={cls="plus";text='\uF0C8 允许重新计算同一编码内候选词顺序';left=50;top=224;right=429;bottom=257;align="left";dl=1;dr=1;font=LOGFONT(h=-15;name='FontAwesome');notify=1;z=11};
 chkReorder={cls="plus";text='\uF0C8 允许重新计算同一编码内候选词顺序';left=151;top=159;right=530;bottom=192;align="left";dl=1;dr=1;font=LOGFONT(h=-15;name='FontAwesome');notify=1;z=3};
 editFilePath={cls="plus";left=154;top=78;right=533;bottom=109;align="left";border={bottom=1;color=-16744448};dl=1;dr=1;editable=1;font=LOGFONT(h=-15);tabstop=1;textPadding={top=8;bottom=1};z=2};
 plusCodeTable={cls="plus";left=154;top=42;right=533;bottom=73;align="left";border={bottom=1;color=-16744448};color=10789024;dl=1;dr=1;font=LOGFONT(h=-15);tabstop=1;textPadding={top=8;bottom=1};z=10};
@@ -36,19 +37,14 @@ winform.btnUpdate.oncommand = function(id,event){
 			
 			var weightFilePath = string.trim( winform.editFilePath.text );
 			if(!#weightFilePath){
-				weightFilePath = ..io.appData("/aardio/std/wubi/word-weight.txt");
-				if(!io.exist(weightFilePath)){
-					
-					import sevenZip.lzma.httpFile;
-					sevenZip.lzma.httpFile.saveFromUrl("http://wubi.aardio.com/download/word-weight.lzma"
-						,weightFilePath)
-						
-					if(!io.exist(weightFilePath)){ 
-						winform.btnUpdate.disabledText = null;
-						winform.msgErr("加载微软词频文件时遇到网络错误") 
-						return;
-					}
+				import wubi.weightData;
+				var weightFilePath,err = wubi.weightData.getPath();
+				if(!weightFilePath){ 
+					winform.btnUpdate.disabledText = null;
+					winform.msgErr(err);
+					return; 
 				} 
+				
 				winform.editFilePath.text = weightFilePath;	
 			}
 

@@ -284,7 +284,7 @@ class lexFile{
 
 		
 	};  
-	add = function(code,word){
+	add = function(code,word,weight){
 		if( code && word ){ 
 			if(!this.outputMap[code]){
 				this.outputMap[code] = {word}
@@ -293,6 +293,11 @@ class lexFile{
 			else {
 				push(this.outputMap[code],word);
 			} 
+			
+			if(weight){
+				if(!this.codeWeight[code])this.codeWeight[code]={[word]=weight};
+				else this.codeWeight[code][word]=weight;
+			}
 		} 	
 	};
 	addLex = function(lexFileObject){
@@ -1031,23 +1036,46 @@ class lexFile{
 	getCode = function(code){
 		return this.outputMap[code]
 	}
+	getCachCharCodes = function(clear){
+		if(clear) this.cachCharCodes = null;
+		
+		if(!this.cachCharCodes){
+			var len = ..string.len;
+			var cachCharCodes = {}
+			for(code,words in this.outputMap){
+				if(#code<2) continue;
+				
+				for(k,word in words){
+					 if(len(word)===1){
+					 	cachCharCodes[word] = code;
+					 }
+				} 
+			}
+			
+			this.cachCharCodes = cachCharCodes;
+		}
+		
+		return this.cachCharCodes;
+	}
 	combineCode = function(str){
+		var cachCharCodes = this.getCachCharCodes();
+		
 		var arr = ..string.split(str);
 		if(#arr<2){return;}
 		
 		var codes = {}
-		codes[1] = this.find(arr[1],2);
-		codes[2] = this.find(arr[2],2);
+		codes[1] = cachCharCodes[arr[1]];
+		codes[2] = cachCharCodes[arr[2]];
 		
 		if(!(codes[1]&&codes[2])){return;}
 		
 		if(arr[3]){
-			codes[3] = this.find(arr[3],2);
+			codes[3] = cachCharCodes[arr[3]];
 			if(!(codes[3]))return;
 		}
 		
 		if(#arr>=4){
-			codes[4]= this.find(arr[#arr],2);
+			codes[4]= cachCharCodes[arr[#arr]];
 			if(!(codes[4]))return;
 		}
 		
@@ -1062,22 +1090,24 @@ class lexFile{
 		}
 	}
 	combineCodeZhengma = function(str){
+		var cachCharCodes = this.getCachCharCodes();
+		
 		var arr = ..string.split(str);
 		if(#arr<2){return;}
 		
 		var codes = {}
-		codes[1] = this.find(arr[1],2);
-		codes[2] = this.find(arr[2],2);
+		codes[1] = cachCharCodes[arr[1]];
+		codes[2] = cachCharCodes[arr[2]];
 		
 		if(!(codes[1]&&codes[2])){return;}
 		
 		if(arr[3]){
-			codes[3] = this.find(arr[3],2);
+			codes[3] = cachCharCodes[arr[3]];
 			if(!(codes[3]))return;
 		}
 		
 		if(#arr>=4){
-			codes[4]= this.find(arr[4],2);
+			codes[4]= cachCharCodes[arr[4]];
 			if(!(codes[4]))return;
 		}
 		

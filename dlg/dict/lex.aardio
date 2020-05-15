@@ -742,6 +742,96 @@ var createMenuItems = function(){
 			} ; lambda()!winform.editLex.canCopy() ? 1/*_MF_GRAYED*/ : 0
 		};
 		
+		{ "空码智能造词（ 使用" + (winform.listbox.selIndex>1 ? "选定码表）" : "系统码表）");
+			function(id){
+				var lexPath,lexName;
+				var selIndex = winform.listbox.selIndex;
+				if(selIndex>1){
+					lexName = config.lex.names[selIndex-1];
+					lexPath = config.lex.files[lexName];
+				}
+			
+				thread.invoke( 
+					function(winform,lexPath,lexName){
+						winform.editLex.busy(true,"正在造词，请稍候数分钟......");
+						
+						import wubi.lexFile;
+						var lexFile = wubi.lexFile(lexPath)
+						if(lexFile.isEmpty()){
+							winform.editLex.showErrorTip("",(lexName:"系统码表")+"不能为空")
+							winform.editLex.busy(false);
+							return;
+						}
+						
+						import wubi.weightData;
+						var weightFilePath,err = wubi.weightData.getPath();
+						if(!weightFilePath){  
+							winform.msgErr(err);
+							winform.editLex.busy(false);
+							return; 
+						} 
+						
+						var push = ..table.push;
+						var match = ..string.match;
+						var strlen = ..string.len;
+						var imeVer,formation = lexFile.getVersion();
+						var newWord = {}
+						
+						var lexFileNew = wubi.lexFile("")
+						lexFileNew.addText(winform.editLex.text);
+						if(imeVer=="zhengma"){
+							if(!formation){
+								winform.msgErr("郑码造词必须选定专用的构词码表")
+								winform.editLex.busy(false,"郑码造词必须选定专用的构词码表");
+								return;
+							}
+							
+							for( line in ..io.lines(weightFilePath) ){
+								var word,weight = match(line,"(:+)\s+(\d+)");
+								if(!word) continue;
+								if(strlen(word)==1) continue;
+								
+								var code = lexFile.combineCodeZhengma(word);
+								var items = lexFileNew.getCode(code)
+								if(!#items && code){
+									if(!newWord[code])newWord[code]={{word;weight}}
+									else {
+										push( newWord[code],{word;weight})
+									}
+								}
+							}
+						} 
+						else {
+							for( line in ..io.lines(weightFilePath) ){
+								var word,weight = match(line,"(:+)\s+(\d+)");
+								if(!word) continue;
+								if(strlen(word)==1) continue;
+								
+								var code = lexFile.combineCode(word);
+								var items = lexFileNew.getCode(code)
+								if(!#items && code){
+									if(!newWord[code])newWord[code]={{word;weight}}
+									else {
+										push( newWord[code],{word;weight})
+									}
+								}
+							}
+						} 
+						
+						var count = 0;
+						var sort = ..table.sort;
+						for(code,words in newWord){
+							sort(words,lambda(b)owner[2]<b[2])
+							lexFileNew.add(code,words[1][1],words[1][2]);
+							count++;
+						}
+						
+						winform.editLex.text =  lexFileNew.tostring();
+						winform.editLex.busy(false,"已添加空码新词：" + count + "个" ); 
+					},winform,lexPath,lexName
+				)
+			} 
+		};
 				
 		{ /*---分隔线---*/ };
 		{ "转换格式";{ 
